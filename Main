@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>CS2 Cases</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CS2 Cases">
+<meta name="theme-color" content="#0a0a0f">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--panel:#13131f;--panel2:#1a1a2a;--border:#2a2a3f;--text:#c8ccd8;--text2:#7a7d90;--gold:#e8b04b;--accent:#4b69ff;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);overflow:hidden;touch-action:pan-y;}
+.screen{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;}
+.screen.active{display:flex;}
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(13,13,20,0.97);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);backdrop-filter:blur(12px);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;background:none;border:none;cursor:pointer;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
+.nav-btn.active{color:var(--accent);}
+.nav-btn svg{width:22px;height:22px;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;display:flex;justify-content:space-between;align-items:center;}
+.topbar-title{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;letter-spacing:2px;color:white;}
+.balance-chip{display:flex;align-items:center;gap:4px;background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-weight:700;font-size:15px;color:var(--gold);}
+#store{padding-bottom:80px;}
+.store-hero{background:linear-gradient(180deg,#1a1230 0%,var(--bg) 100%);padding:24px 16px 16px;text-align:center;}
+.store-hero h2{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--text2);text-transform:uppercase;margin-bottom:6px;}
+.store-hero h1{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:white;}
+.section-label{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;padding:16px 16px 8px;border-top:1px solid var(--border);}
+.store-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px 12px;}
+.store-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;}
+.store-card:active{opacity:.85;}
+.card-art{width:100%;aspect-ratio:1.6;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.card-art svg{width:72%;height:72%;filter:drop-shadow(0 4px 16px rgba(0,0,0,.7));}
+.card-info{padding:10px 12px;}
+.card-name{font-weight:700;font-size:15px;color:white;margin-bottom:2px;}
+.card-sub{font-size:12px;color:var(--text2);margin-bottom:8px;}
+.card-price-row{display:flex;align-items:center;justify-content:space-between;}
+.card-price{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--gold);}
+.buy-btn{background:var(--accent);color:white;border:none;border-radius:6px;padding:5px 14px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.buy-btn:active{opacity:.8;}
+.buy-btn.key-btn{background:#1e2e1e;border:1px solid #3a6a3a;color:#6aaa6a;}
+.inv-counts{display:flex;gap:8px;padding:0 12px 12px;}
+.inv-count-chip{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex:1;text-align:center;}
+.inv-count-chip .num{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:white;}
+.inv-count-chip .lbl{font-size:11px;color:var(--text2);}
+#cases{padding-bottom:80px;}
+.cases-list{padding:12px;display:flex;flex-direction:column;gap:10px;}
+.case-row{background:var(--panel);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:14px;padding:14px;cursor:pointer;}
+.case-row:active{border-color:var(--accent);}
+.case-icon svg{width:46px;height:46px;}
+.case-info{flex:1;}
+.case-name{font-weight:700;font-size:16px;color:white;}
+.case-count{font-size:12px;color:var(--text2);}
+.rarity-bar-row{display:flex;gap:3px;padding:0 12px 12px;}
+.rarity-seg{height:4px;flex:1;border-radius:2px;}
+.open-btn-row{display:flex;gap:8px;padding:0 12px 12px;}
+.open-btn{flex:1;background:linear-gradient(135deg,#4b69ff,#7b4fff);color:white;border:none;border-radius:10px;padding:14px;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 4px 20px rgba(75,105,255,.3);}
+.open-btn:active{opacity:.85;}
+.open-btn:disabled{opacity:.3;cursor:not-allowed;}
+.need-key-badge{background:#1a2a1a;border:1px solid #3a5a3a;color:#6aaa6a;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;}
+#inventory{padding-bottom:80px;}
+.inv-stats{display:flex;gap:8px;padding:12px;}
+.inv-stat{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
+.inv-stat .val{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;color:white;}
+.inv-stat .lbl{font-size:10px;color:var(--text2);letter-spacing:1px;margin-top:2px;}
+.filter-row{display:flex;gap:6px;padding:0 12px 10px;overflow-x:auto;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fchip{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;}
+.fchip.active{background:var(--accent);border-color:var(--accent);color:white;}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 12px;}
+.inv-item{background:var(--panel);border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:pointer;position:relative;}
+.inv-item:active{opacity:.85;}
+.inv-item-art{width:100%;aspect-ratio:1.4;display:flex;align-items:center;justify-content:center;position:relative;}
+.inv-item-art svg{width:82%;height:82%;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8));}
+.inv-rarity-bar{position:absolute;bottom:0;left:0;right:0;height:3px;}
+.inv-item-info{padding:8px 10px;}
+.inv-item-weapon{font-weight:700;font-size:13px;color:white;}
+.inv-item-skin{font-size:11px;color:var(--text2);margin:1px 0 4px;}
+.inv-item-val{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
+.sell-tag{position:absolute;top:6px;right:6px;background:rgba(8,8,14,.88);border:1px solid var(--border);color:var(--gold);border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;cursor:pointer;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:12px;color:var(--text2);text-align:center;}
+.empty .ico{font-size:56px;opacity:.3;}
+.empty p{font-size:15px;line-height:1.6;}
+/* SPINNER */
+#open-modal{position:fixed;inset:0;z-index:500;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;}
+#open-modal.open{display:flex;}
+.spin-label{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--text2);margin-bottom:6px;padding-top:env(safe-area-inset-top,0px);}
+.spin-title{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;color:white;margin-bottom:30px;}
+.spin-wrap{width:100%;overflow:hidden;position:relative;border-top:2px solid rgba(255,255,255,.1);border-bottom:2px solid rgba(255,255,255,.1);}
+.spin-line{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:linear-gradient(180deg,transparent,white,transparent);z-index:10;pointer-events:none;}
+.spin-line::before,.spin-line::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;}
+.spin-line::before{top:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid white;}
+.spin-line::after{bottom:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:10px solid white;}
+.spin-track{display:flex;align-items:center;height:168px;padding:10px 0;will-change:transform;gap:6px;padding-left:calc(50vw - 84px);}
+.spin-item{flex-shrink:0;width:162px;height:148px;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px solid transparent;position:relative;}
+.spin-item svg{width:128px;height:68px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.9));}
+.spin-item-name{font-size:10px;font-weight:700;color:white;text-align:center;padding:0 4px;line-height:1.2;z-index:1;}
+.spin-item-wear{font-size:9px;color:rgba(255,255,255,.55);z-index:1;}
+.spin-rbar{position:absolute;bottom:0;left:0;right:0;height:3px;}
+/* RESULT */
+#result{position:fixed;inset:0;z-index:600;background:transparent;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .35s;}
+#result.show{background:rgba(0,0,0,.92);pointer-events:all;}
+.res-card{display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transform:scale(.55) translateY(50px);transition:opacity .4s,transform .4s;width:80vw;max-width:340px;}
+#result.show .res-card{opacity:1;transform:scale(1) translateY(0);transition-delay:.12s;}
+.res-rarity{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;font-weight:700;text-transform:uppercase;}
+.res-bar{width:100%;height:4px;border-radius:2px;}
+.res-art{width:200px;height:110px;border-radius:14px;display:flex;align-items:center;justify-content:center;position:relative;}
+.res-art svg{width:88%;height:88%;}
+.res-name{font-family:'Orbitron',monospace;font-size:17px;font-weight:900;color:white;text-align:center;line-height:1.2;}
+.res-skin{font-size:14px;color:rgba(255,255,255,.55);text-align:center;}
+.res-wear{font-size:12px;color:rgba(255,255,255,.35);}
+.res-val{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--gold);margin-top:4px;}
+.res-btns{display:flex;gap:10px;width:100%;margin-top:10px;}
+.res-btn{flex:1;padding:13px;border-radius:10px;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+.res-btn:active{opacity:.85;}
+.res-btn.keep{background:var(--panel2);color:white;border:1px solid var(--border);}
+.res-btn.sell{background:var(--gold);color:#0a0a0f;}
+.res-btn.again{background:linear-gradient(135deg,#4b69ff,#7b4fff);color:white;width:100%;margin-top:4px;}
+/* SELL SHEET */
+#sell-modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.8);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+#sell-modal.open{display:flex;}
+.sell-sheet{background:var(--panel);border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;padding:20px;width:100%;max-width:500px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
+.sell-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.sell-title{font-family:'Orbitron',monospace;font-size:14px;color:white;margin-bottom:2px;}
+.sell-sub{color:var(--text2);font-size:13px;margin-bottom:14px;}
+.sell-art{width:100%;height:110px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.sell-art svg{width:55%;height:80%;}
+.sell-price-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.sell-price-lbl{font-size:14px;color:var(--text2);}
+.sell-price-val{font-family:'Orbitron',monospace;font-size:22px;color:var(--gold);font-weight:700;}
+.sell-btns{display:flex;gap:10px;}
+.sell-cancel{flex:1;background:var(--panel2);border:1px solid var(--border);color:white;border-radius:10px;padding:13px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+.sell-go{flex:2;background:var(--gold);color:#0a0a0f;border:none;border-radius:10px;padding:13px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+#toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--panel2);border:1px solid var(--border);color:white;padding:10px 20px;border-radius:20px;font-weight:700;font-size:14px;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.rc-consumer{background:linear-gradient(155deg,#1e1e28,#28282e);}
+.rc-industrial{background:linear-gradient(155deg,#1a2030,#1e2840);}
+.rc-milspec{background:linear-gradient(155deg,#16184a,#1e1e50);}
+.rc-restricted{background:linear-gradient(155deg,#261040,#2e1458);}
+.rc-classified{background:linear-gradient(155deg,#361030,#440c40);}
+.rc-covert{background:linear-gradient(155deg,#401010,#581010);}
+.rc-contraband{background:linear-gradient(155deg,#3a2a08,#4a3210);}
+</style>
+</head>
+<body>
+
+<div class="screen active" id="store">
+  <div class="topbar">
+    <div class="topbar-title">CS2 CASES</div>
+    <div class="balance-chip">$<span id="bal1">100.00</span></div>
+  </div>
+  <div class="store-hero"><h2>Official Store</h2><h1>CASES & KEYS</h1></div>
+  <div class="inv-counts">
+    <div class="inv-count-chip"><div class="num" id="s-cases">0</div><div class="lbl">Cases</div></div>
+    <div class="inv-count-chip"><div class="num" id="s-keys">0</div><div class="lbl">Keys</div></div>
+    <div class="inv-count-chip"><div class="num" id="s-skins">0</div><div class="lbl">Skins</div></div>
+  </div>
+  <div class="section-label">🗝️ Keys</div>
+  <div class="store-grid" style="padding-bottom:0">
+    <div class="store-card" onclick="buy('key',1)">
+      <div class="card-art" style="background:linear-gradient(155deg,#1a2a1a,#0f1f0f)">
+        <svg viewBox="0 0 80 60" fill="none"><circle cx="22" cy="28" r="12" stroke="#6aaa6a" stroke-width="3.5"/><circle cx="22" cy="28" r="5" fill="#6aaa6a" opacity=".35"/><rect x="32" y="25" width="32" height="6" rx="3" fill="#6aaa6a"/><rect x="54" y="31" width="7" height="8" rx="2" fill="#6aaa6a"/><rect x="44" y="31" width="7" height="7" rx="2" fill="#6aaa6a"/><circle cx="22" cy="28" r="2.5" fill="#6aaa6a"/></svg>
+      </div>
+      <div class="card-info"><div class="card-name">Case Key</div><div class="card-sub">Opens any case</div>
+        <div class="card-price-row"><div class="card-price">$2.50</div><button class="buy-btn key-btn" onclick="event.stopPropagation();buy('key',1)">BUY</button></div></div>
+    </div>
+    <div class="store-card" onclick="buy('key',5)">
+      <div class="card-art" style="background:linear-gradient(155deg,#1a2a1a,#0f1f0f)">
+        <svg viewBox="0 0 80 60" fill="none"><circle cx="18" cy="26" r="9" stroke="#6aaa6a" stroke-width="2.5"/><circle cx="18" cy="26" r="3.5" fill="#6aaa6a" opacity=".4"/><rect x="26" y="23" width="24" height="5" rx="2.5" fill="#6aaa6a"/><rect x="44" y="28" width="5" height="7" rx="1.5" fill="#6aaa6a"/><rect x="36" y="28" width="5" height="6" rx="1.5" fill="#6aaa6a"/><text x="52" y="48" fill="#e8b04b" font-size="16" font-weight="bold" font-family="monospace">×5</text></svg>
+      </div>
+      <div class="card-info"><div class="card-name">5× Key Bundle</div><div class="card-sub">Save $1.25</div>
+        <div class="card-price-row"><div class="card-price">$11.25</div><button class="buy-btn key-btn" onclick="event.stopPropagation();buy('key',5)">BUY</button></div></div>
+    </div>
+  </div>
+  <div class="section-label">📦 Cases</div>
+  <div class="store-grid" id="store-grid"></div>
+</div>
+
+<div class="screen" id="cases">
+  <div class="topbar"><div class="topbar-title">OPEN CASES</div><div class="balance-chip">$<span id="bal2">100.00</span></div></div>
+  <div id="cases-list" class="cases-list"></div>
+</div>
+
+<div class="screen" id="inventory">
+  <div class="topbar"><div class="topbar-title">INVENTORY</div><div class="balance-chip">$<span id="bal3">100.00</span></div></div>
+  <div class="inv-stats">
+    <div class="inv-stat"><div class="val" id="inv-count">0</div><div class="lbl">ITEMS</div></div>
+    <div class="inv-stat"><div class="val" id="inv-total">$0</div><div class="lbl">VALUE</div></div>
+    <div class="inv-stat"><div class="val" id="inv-best">$0</div><div class="lbl">BEST</div></div>
+  </div>
+  <div class="filter-row" id="inv-filters"></div>
+  <div class="inv-grid" id="inv-grid"></div>
+</div>
+
+<nav id="nav">
+  <button class="nav-btn active" onclick="tab('store',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.4 7h12.8M9 20a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/></svg>Store
+  </button>
+  <button class="nav-btn" onclick="tab('cases',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V6a4 4 0 018 0v2"/><line x1="12" y1="13" x2="12" y2="16"/></svg>Open
+  </button>
+  <button class="nav-btn" onclick="tab('inventory',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Inventory
+  </button>
+</nav>
+
+<div id="open-modal">
+  <div class="spin-label" id="spin-label">OPENING</div>
+  <div class="spin-title" id="spin-title">REVOLUTION CASE</div>
+  <div class="spin-wrap">
+    <div class="spin-line"></div>
+    <div class="spin-track" id="spin-track"></div>
+  </div>
+</div>
+
+<div id="result">
+  <div class="res-card">
+    <div class="res-rarity" id="r-rarity">CLASSIFIED</div>
+    <div class="res-bar" id="r-bar"></div>
+    <div class="res-art" id="r-art"></div>
+    <div class="res-name" id="r-name">AK-47</div>
+    <div class="res-skin" id="r-skin">Redline</div>
+    <div class="res-wear" id="r-wear">Field-Tested</div>
+    <div class="res-val" id="r-val">$12.50</div>
+    <div class="res-btns">
+      <button class="res-btn keep" onclick="keepItem()">KEEP</button>
+      <button class="res-btn sell" onclick="sellItem()">SELL</button>
+    </div>
+    <button class="res-btn again" onclick="openAgain()">OPEN AGAIN</button>
+  </div>
+</div>
+
+<div id="sell-modal">
+  <div class="sell-sheet">
+    <div class="sell-handle"></div>
+    <div class="sell-title" id="sm-weapon"></div>
+    <div class="sell-sub" id="sm-skin"></div>
+    <div class="sell-art" id="sm-art"></div>
+    <div class="sell-price-row"><div class="sell-price-lbl">You receive</div><div class="sell-price-val" id="sm-price">$0.00</div></div>
+    <div class="sell-btns">
+      <button class="sell-cancel" onclick="closeSell()">CANCEL</button>
+      <button class="sell-go" onclick="doSell()">SELL NOW</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>// ─── WEAPON SVGs ────────────────────────────────────────────────────────────
+const W = {
+  'AK-47':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="24" width="98" height="10" rx="3" fill="${c}"/><rect x="6" y="22" width="7" height="14" rx="2" fill="${c}" opacity=".85"/><rect x="106" y="25" width="40" height="7" rx="2" fill="${c}" opacity=".65"/><rect x="48" y="20" width="32" height="6" rx="2" fill="${c}" opacity=".6"/><rect x="53" y="34" width="15" height="12" rx="3" fill="${c}" opacity=".9"/><rect x="38" y="34" width="9" height="16" rx="2" fill="${c}" opacity=".7"/><rect x="20" y="28" width="5" height="18" rx="2" fill="${c}" opacity=".5"/><rect x="12" y="21" width="90" height="2" rx="1" fill="white" opacity=".12"/></svg>`,
+  'AWP':         c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="6" y="26" width="108" height="8" rx="2" fill="${c}"/><rect x="114" y="27" width="38" height="5" rx="2" fill="${c}" opacity=".55"/><rect x="34" y="18" width="50" height="8" rx="2" fill="${c}" opacity=".8"/><rect x="36" y="16" width="7" height="26" rx="2" fill="${c}" opacity=".9"/><rect x="58" y="34" width="16" height="13" rx="3" fill="${c}" opacity=".85"/><rect x="80" y="20" width="9" height="6" rx="1" fill="${c}" opacity=".5"/><rect x="82" y="14" width="5" height="12" rx="1" fill="${c}" opacity=".55"/><rect x="9" y="23" width="98" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'M4A4':        c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="10" y="24" width="94" height="10" rx="3" fill="${c}"/><rect x="104" y="25" width="40" height="7" rx="2" fill="${c}" opacity=".62"/><rect x="44" y="19" width="36" height="6" rx="2" fill="${c}" opacity=".72"/><rect x="48" y="34" width="15" height="13" rx="3" fill="${c}" opacity=".9"/><rect x="28" y="34" width="10" height="15" rx="2" fill="${c}" opacity=".7"/><rect x="8" y="21" width="4" height="14" rx="1" fill="${c}" opacity=".8"/><rect x="14" y="21" width="86" height="2" rx="1" fill="white" opacity=".12"/></svg>`,
+  'M4A1-S':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="10" y="24" width="94" height="10" rx="3" fill="${c}"/><rect x="104" y="26" width="44" height="6" rx="3" fill="${c}" opacity=".5"/><rect x="44" y="19" width="36" height="6" rx="2" fill="${c}" opacity=".72"/><rect x="48" y="34" width="15" height="13" rx="3" fill="${c}" opacity=".9"/><rect x="28" y="34" width="10" height="15" rx="2" fill="${c}" opacity=".7"/><rect x="8" y="21" width="4" height="14" rx="1" fill="${c}" opacity=".8"/><rect x="14" y="21" width="86" height="2" rx="1" fill="white" opacity=".12"/></svg>`,
+  'USP-S':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="18" y="22" width="82" height="14" rx="4" fill="${c}"/><rect x="100" y="25" width="44" height="7" rx="3" fill="${c}" opacity=".5"/><rect x="48" y="36" width="22" height="16" rx="3" fill="${c}" opacity=".88"/><rect x="22" y="18" width="72" height="5" rx="2" fill="${c}" opacity=".65"/><rect x="88" y="20" width="10" height="5" rx="1" fill="${c}" opacity=".55"/><rect x="22" y="19" width="64" height="2" rx="1" fill="white" opacity=".14"/></svg>`,
+  'Glock-18':    c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="18" y="22" width="78" height="14" rx="4" fill="${c}"/><rect x="96" y="25" width="36" height="8" rx="3" fill="${c}" opacity=".6"/><rect x="46" y="36" width="24" height="17" rx="3" fill="${c}" opacity=".88"/><rect x="22" y="18" width="68" height="5" rx="2" fill="${c}" opacity=".65"/><rect x="22" y="19" width="60" height="2" rx="1" fill="white" opacity=".14"/></svg>`,
+  'Desert Eagle':c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="16" y="20" width="88" height="17" rx="4" fill="${c}"/><rect x="104" y="25" width="34" height="8" rx="3" fill="${c}" opacity=".58"/><rect x="42" y="37" width="30" height="18" rx="3" fill="${c}" opacity=".88"/><rect x="20" y="16" width="78" height="5" rx="2" fill="${c}" opacity=".65"/><rect x="86" y="18" width="16" height="9" rx="2" fill="${c}" opacity=".48"/><rect x="20" y="17" width="72" height="2" rx="1" fill="white" opacity=".16"/></svg>`,
+  'P250':        c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="20" y="23" width="72" height="12" rx="4" fill="${c}"/><rect x="92" y="26" width="32" height="7" rx="3" fill="${c}" opacity=".58"/><rect x="46" y="35" width="22" height="16" rx="3" fill="${c}" opacity=".85"/><rect x="24" y="19" width="62" height="5" rx="2" fill="${c}" opacity=".65"/><rect x="24" y="20" width="56" height="2" rx="1" fill="white" opacity=".13"/></svg>`,
+  'MP9':         c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="24" width="88" height="10" rx="3" fill="${c}"/><rect x="96" y="25" width="48" height="7" rx="2" fill="${c}" opacity=".62"/><rect x="32" y="34" width="14" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="18" y="20" width="72" height="5" rx="2" fill="${c}" opacity=".58"/><rect x="52" y="18" width="22" height="6" rx="2" fill="${c}" opacity=".48"/><rect x="10" y="21" width="82" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'MAC-10':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="10" y="23" width="82" height="12" rx="3" fill="${c}"/><rect x="92" y="24" width="50" height="9" rx="2" fill="${c}" opacity=".58"/><rect x="30" y="35" width="18" height="17" rx="3" fill="${c}" opacity=".85"/><rect x="12" y="18" width="74" height="5" rx="2" fill="${c}" opacity=".58"/><rect x="52" y="16" width="20" height="7" rx="2" fill="${c}" opacity=".48"/><rect x="12" y="19" width="78" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'MP7':         c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="90" height="12" rx="3" fill="${c}"/><rect x="98" y="24" width="48" height="8" rx="2" fill="${c}" opacity=".6"/><rect x="36" y="35" width="16" height="16" rx="3" fill="${c}" opacity=".85"/><rect x="16" y="19" width="78" height="5" rx="2" fill="${c}" opacity=".58"/><rect x="10" y="20" width="85" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'P90':         c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="6" y="23" width="98" height="12" rx="3" fill="${c}"/><rect x="104" y="24" width="44" height="8" rx="2" fill="${c}" opacity=".58"/><rect x="38" y="35" width="14" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="28" y="14" width="58" height="9" rx="3" fill="${c}" opacity=".68"/><rect x="8" y="20" width="92" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'UMP-45':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="92" height="12" rx="3" fill="${c}"/><rect x="100" y="24" width="44" height="8" rx="2" fill="${c}" opacity=".6"/><rect x="36" y="35" width="18" height="16" rx="3" fill="${c}" opacity=".85"/><rect x="16" y="19" width="80" height="5" rx="2" fill="${c}" opacity=".58"/><rect x="10" y="20" width="87" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'Nova':        c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="6" y="24" width="108" height="11" rx="3" fill="${c}"/><rect x="114" y="25" width="38" height="7" rx="2" fill="${c}" opacity=".58"/><rect x="26" y="20" width="62" height="5" rx="2" fill="${c}" opacity=".68"/><rect x="48" y="35" width="20" height="14" rx="3" fill="${c}" opacity=".85"/><rect x="8" y="21" width="104" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'XM1014':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="6" y="24" width="102" height="11" rx="3" fill="${c}"/><rect x="108" y="25" width="42" height="7" rx="2" fill="${c}" opacity=".58"/><rect x="28" y="20" width="60" height="5" rx="2" fill="${c}" opacity=".68"/><rect x="48" y="35" width="20" height="14" rx="3" fill="${c}" opacity=".85"/><rect x="8" y="21" width="98" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'SSG 08':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="6" y="25" width="108" height="8" rx="2" fill="${c}"/><rect x="114" y="26" width="38" height="5" rx="2" fill="${c}" opacity=".52"/><rect x="36" y="18" width="48" height="8" rx="2" fill="${c}" opacity=".74"/><rect x="40" y="15" width="6" height="24" rx="2" fill="${c}" opacity=".85"/><rect x="54" y="33" width="15" height="13" rx="3" fill="${c}" opacity=".85"/><rect x="8" y="22" width="102" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'G3SG1':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="4" y="24" width="114" height="10" rx="2" fill="${c}"/><rect x="118" y="25" width="36" height="6" rx="2" fill="${c}" opacity=".52"/><rect x="32" y="17" width="52" height="8" rx="2" fill="${c}" opacity=".68"/><rect x="36" y="15" width="6" height="22" rx="2" fill="${c}" opacity=".85"/><rect x="56" y="34" width="15" height="13" rx="3" fill="${c}" opacity=".85"/><rect x="6" y="21" width="108" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'SG 553':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="94" height="12" rx="3" fill="${c}"/><rect x="102" y="24" width="44" height="8" rx="2" fill="${c}" opacity=".6"/><rect x="36" y="17" width="42" height="6" rx="2" fill="${c}" opacity=".68"/><rect x="48" y="35" width="15" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="10" y="20" width="88" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'FAMAS':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="90" height="12" rx="3" fill="${c}"/><rect x="98" y="24" width="48" height="8" rx="2" fill="${c}" opacity=".6"/><rect x="36" y="35" width="14" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="18" y="17" width="68" height="6" rx="2" fill="${c}" opacity=".62"/><rect x="10" y="19" width="84" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'Galil AR':    c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="92" height="12" rx="3" fill="${c}"/><rect x="100" y="24" width="44" height="8" rx="2" fill="${c}" opacity=".6"/><rect x="38" y="35" width="16" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="20" y="19" width="74" height="5" rx="2" fill="${c}" opacity=".62"/><rect x="10" y="20" width="87" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'Galil':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="92" height="12" rx="3" fill="${c}"/><rect x="100" y="24" width="44" height="8" rx="2" fill="${c}" opacity=".6"/><rect x="38" y="35" width="16" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="20" y="19" width="74" height="5" rx="2" fill="${c}" opacity=".62"/><rect x="10" y="20" width="87" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'Negev':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="6" y="22" width="102" height="14" rx="3" fill="${c}"/><rect x="108" y="24" width="42" height="9" rx="2" fill="${c}" opacity=".58"/><rect x="26" y="36" width="20" height="17" rx="3" fill="${c}" opacity=".85"/><rect x="8" y="18" width="94" height="5" rx="2" fill="${c}" opacity=".62"/><rect x="8" y="19" width="98" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  'Tec-9':       c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="18" y="23" width="78" height="13" rx="4" fill="${c}"/><rect x="96" y="25" width="40" height="8" rx="3" fill="${c}" opacity=".58"/><rect x="44" y="36" width="24" height="17" rx="3" fill="${c}" opacity=".85"/><rect x="22" y="19" width="64" height="5" rx="2" fill="${c}" opacity=".62"/><rect x="22" y="20" width="60" height="2" rx="1" fill="white" opacity=".13"/></svg>`,
+  'MP5-SD':      c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="8" y="23" width="90" height="12" rx="3" fill="${c}"/><rect x="98" y="24" width="50" height="8" rx="3" fill="${c}" opacity=".5"/><rect x="34" y="35" width="16" height="15" rx="3" fill="${c}" opacity=".85"/><rect x="16" y="19" width="78" height="5" rx="2" fill="${c}" opacity=".58"/><rect x="10" y="20" width="85" height="2" rx="1" fill="white" opacity=".11"/></svg>`,
+  '★ Karambit':  c=>`<svg viewBox="0 0 160 66" fill="none"><path d="M28 48 Q52 18 122 28 Q142 30 146 34 Q149 38 140 40 Q78 38 48 54 Z" fill="${c}"/><path d="M28 48 Q34 46 48 54 Q40 57 28 57 Z" fill="${c}" opacity=".8"/><ellipse cx="28" cy="52" rx="9" ry="6" fill="${c}" opacity=".65"/><circle cx="24" cy="52" r="4.5" fill="none" stroke="${c}" stroke-width="2.5" opacity=".55"/><path d="M28 48 Q52 18 122 28" stroke="white" stroke-width="1" fill="none" opacity=".18"/></svg>`,
+  '★ Butterfly': c=>`<svg viewBox="0 0 160 66" fill="none"><rect x="68" y="26" width="74" height="11" rx="5.5" fill="${c}"/><rect x="16" y="30" width="54" height="7" rx="3.5" fill="${c}" opacity=".78"/><rect x="20" y="26" width="12" height="16" rx="3" fill="${c}" opacity=".68"/><path d="M68 31 Q80 26 92 31 Q80 36 68 31Z" fill="white" opacity=".14"/><rect x="132" y="24" width="12" height="15" rx="3.5" fill="${c}" opacity=".88"/></svg>`,
+  '★ M9 Bayonet':c=>`<svg viewBox="0 0 160 66" fill="none"><path d="M18 36 L132 26 L142 33 L132 36 Z" fill="${c}"/><path d="M18 36 L24 41 L132 36 Z" fill="${c}" opacity=".68"/><rect x="12" y="32" width="18" height="13" rx="3" fill="${c}" opacity=".78"/><path d="M18 36 L132 26 L132 36" stroke="white" stroke-width="1" fill="none" opacity=".16"/></svg>`,
+  '★ Bayonet':   c=>`<svg viewBox="0 0 160 66" fill="none"><path d="M16 34 L130 24 L140 31 L130 34 Z" fill="${c}"/><path d="M16 34 L22 39 L130 34 Z" fill="${c}" opacity=".68"/><rect x="10" y="30" width="18" height="13" rx="3" fill="${c}" opacity=".78"/><path d="M16 34 L130 24 L130 34" stroke="white" stroke-width="1" fill="none" opacity=".16"/></svg>`,
+};
+
+function wsvg(weapon, color) {
+return (W[weapon] || (c=>`<svg viewBox="0 0 160 56" fill="none"><rect x="18" y="22" width="80" height="14" rx="4" fill="${c}"/><rect x="98" y="25" width="38" height="8" rx="3" fill="${c}" opacity=".58"/><rect x="46" y="36" width="24" height="17" rx="3" fill="${c}" opacity=".85"/><rect x="22" y="18" width="70" height="5" rx="2" fill="${c}" opacity=".65"/></svg>`))(color);
+}
+
+function caseSVG(c, sz=48) {
+return `<svg width="${sz}" height="${sz}" viewBox="0 0 48 48" fill="none"><rect x="4" y="14" width="40" height="28" rx="4" fill="${c.color}" opacity=".14" stroke="${c.color}" stroke-width="1.5"/><rect x="4" y="14" width="40" height="8" rx="4" fill="${c.color}" opacity=".28"/><rect x="14" y="10" width="20" height="6" rx="3" fill="${c.color}" opacity=".55" stroke="${c.color}" stroke-width="1"/><circle cx="24" cy="28" r="5" fill="none" stroke="${c.color}" stroke-width="2"/><circle cx="24" cy="28" r="2" fill="${c.color}"/><line x1="24" y1="23" x2="24" y2="20" stroke="${c.color}" stroke-width="2"/></svg>`;
+}
+
+// ─── AUDIO ──────────────────────────────────────────────────────────────────
+let AC = null;
+function ac() {
+if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+if (AC.state === ‘suspended’) AC.resume();
+return AC;
+}
+
+function ding(freq, dur, vol=0.15, type=‘sine’, delay=0) {
+try {
+const ctx = ac(), o = ctx.createOscillator(), g = ctx.createGain();
+o.connect(g); g.connect(ctx.destination);
+o.type = type; o.frequency.value = freq;
+const t = ctx.currentTime + delay;
+g.gain.setValueAtTime(vol, t);
+g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+o.start(t); o.stop(t + dur + 0.01);
+} catch(e){}
+}
+
+function playTick(slow) {
+ding(slow ? 480 : 820, slow ? 0.09 : 0.05, slow ? 0.22 : 0.16, ‘sine’);
+}
+
+function playBuy() {
+ding(440,0.12,0.1); ding(550,0.12,0.1,undefined,0.1); ding(660,0.15,0.1,undefined,0.18);
+}
+
+function playSell() {
+ding(330,0.14,0.11); ding(440,0.18,0.11,undefined,0.12);
+}
+
+function playReveal(rarity) {
+const f = {consumer:220,industrial:280,milspec:340,restricted:420,classified:520,covert:660,contraband:880}[rarity]||440;
+[0,0.08,0.16,0.24].forEach((d,i) => ding(f*(0.5+i*0.5), 0.55, 0.13, i<2?‘sine’:‘triangle’, d));
+if ([‘classified’,‘covert’,‘contraband’].includes(rarity)) {
+for(let i=0;i<6;i++) ding(f*(2+i*0.5), 0.14, 0.07, ‘sine’, 0.3+i*0.06);
+}
+}
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const RARITY = {
+consumer:   {label:‘Consumer Grade’,   color:’#b0b0b8’, cls:‘rc-consumer’},
+industrial: {label:‘Industrial Grade’, color:’#6496c8’, cls:‘rc-industrial’},
+milspec:    {label:‘Mil-Spec Grade’,   color:’#4b69ff’, cls:‘rc-milspec’},
+restricted: {label:‘Restricted’,       color:’#8847ff’, cls:‘rc-restricted’},
+classified: {label:‘Classified’,       color:’#d32ce6’, cls:‘rc-classified’},
+covert:     {label:‘Covert’,           color:’#eb4b4b’, cls:‘rc-covert’},
+contraband: {label:‘★ Extraordinary’,  color:’#e4ae39’, cls:‘rc-contraband’},
+};
+
+const WEAR = [
+{label:‘Factory New’,    abbr:‘FN’, m:1.6},
+{label:‘Minimal Wear’,   abbr:‘MW’, m:1.2},
+{label:‘Field-Tested’,   abbr:‘FT’, m:1.0},
+{label:‘Well-Worn’,      abbr:‘WW’, m:0.75},
+{label:‘Battle-Scarred’, abbr:‘BS’, m:0.55},
+];
+
+const CASES = [
+{ id:‘revolution’, name:‘Revolution Case’, color:’#4b69ff’, price:1.80, desc:‘Fade collection’,
+skins:[
+{r:‘consumer’,   w:‘MP9’,          s:‘Ruby Poison Dart’,     p:0.12},
+{r:‘consumer’,   w:‘P250’,         s:‘Vino Primo’,           p:0.10},
+{r:‘consumer’,   w:‘Nova’,         s:‘Toy Soldier’,          p:0.09},
+{r:‘industrial’, w:‘SG 553’,       s:‘Waves Periwinkle’,     p:0.25},
+{r:‘industrial’, w:‘FAMAS’,        s:‘Doomkitty’,            p:0.30},
+{r:‘milspec’,    w:‘Glock-18’,     s:‘Bullet Queen’,         p:0.80},
+{r:‘milspec’,    w:‘M4A4’,         s:‘Temukau’,              p:1.20},
+{r:‘milspec’,    w:‘UMP-45’,       s:‘Wild Child’,           p:0.60},
+{r:‘restricted’, w:‘AK-47’,        s:‘Head Shot’,            p:3.50},
+{r:‘restricted’, w:‘M4A1-S’,       s:‘Emphorosaur-S’,        p:4.20},
+{r:‘classified’, w:‘AWP’,          s:‘Chromatic Aberration’, p:18.0},
+{r:‘classified’, w:‘AK-47’,        s:‘Inheritance’,          p:22.0},
+{r:‘covert’,     w:‘M4A4’,         s:‘Hellfire’,             p:55.0},
+{r:‘covert’,     w:‘AK-47’,        s:‘Redline’,              p:48.0},
+{r:‘contraband’, w:‘★ Karambit’,   s:‘Fade’,                 p:380},
+]},
+{ id:‘kilowatt’, name:‘Kilowatt Case’, color:’#f0c040’, price:2.10, desc:‘Electric neon’,
+skins:[
+{r:‘consumer’,   w:‘MAC-10’,       s:‘Disco Tech’,           p:0.08},
+{r:‘consumer’,   w:‘Negev’,        s:‘Ultralight’,           p:0.07},
+{r:‘consumer’,   w:‘XM1014’,       s:‘Irezumi’,              p:0.09},
+{r:‘industrial’, w:‘MP7’,          s:‘Abyssal Apparition’,   p:0.20},
+{r:‘industrial’, w:‘P90’,          s:‘Freight’,              p:0.28},
+{r:‘milspec’,    w:‘USP-S’,        s:‘Jawbreaker’,           p:0.90},
+{r:‘milspec’,    w:‘Galil AR’,     s:‘Destroyer’,            p:0.70},
+{r:‘milspec’,    w:‘SSG 08’,       s:‘Parallax’,             p:0.55},
+{r:‘restricted’, w:‘M4A1-S’,       s:‘Black Lotus’,          p:5.00},
+{r:‘restricted’, w:‘Desert Eagle’, s:‘Ocean Drive’,          p:4.50},
+{r:‘classified’, w:‘MP9’,          s:‘Starlight Protector’,  p:16.0},
+{r:‘classified’, w:‘AK-47’,        s:‘Vulcan’,               p:28.0},
+{r:‘covert’,     w:‘AWP’,          s:‘Duality’,              p:62.0},
+{r:‘covert’,     w:‘M4A4’,         s:‘Howl’,                 p:95.0},
+{r:‘contraband’, w:‘★ Butterfly’,  s:‘Tiger Tooth’,          p:450},
+]},
+{ id:‘recoil’, name:‘Recoil Case’, color:’#eb4b4b’, price:1.50, desc:‘Dark military’,
+skins:[
+{r:‘consumer’,   w:‘FAMAS’,        s:‘Crypsis’,              p:0.08},
+{r:‘consumer’,   w:‘P250’,         s:‘Lifted Spirits’,       p:0.07},
+{r:‘consumer’,   w:‘MP5-SD’,       s:‘Lab Rats’,             p:0.10},
+{r:‘industrial’, w:‘G3SG1’,        s:‘Chronos’,              p:0.22},
+{r:‘industrial’, w:‘XM1014’,       s:‘XOXO’,                 p:0.18},
+{r:‘milspec’,    w:‘AWP’,          s:‘Exoskeleton’,          p:1.10},
+{r:‘milspec’,    w:‘SG 553’,       s:‘Dragon Tech’,          p:0.85},
+{r:‘milspec’,    w:‘Glock-18’,     s:‘Winterized’,           p:0.65},
+{r:‘restricted’, w:‘AK-47’,        s:‘Ice Coaled’,           p:4.00},
+{r:‘restricted’, w:‘M4A1-S’,       s:‘Restless’,             p:6.50},
+{r:‘classified’, w:‘USP-S’,        s:‘Printstream’,          p:24.0},
+{r:‘classified’, w:‘Desert Eagle’, s:‘Trigger Discipline’,   p:20.0},
+{r:‘covert’,     w:‘AK-47’,        s:‘Gold Arabesque’,       p:72.0},
+{r:‘covert’,     w:‘M4A4’,         s:‘Cyber Security’,       p:58.0},
+{r:‘contraband’, w:‘★ M9 Bayonet’, s:‘Doppler’,              p:320},
+]},
+{ id:‘dreams’, name:‘Dreams & Nightmares’, color:’#8847ff’, price:2.50, desc:‘Supernatural skins’,
+skins:[
+{r:‘consumer’,   w:‘MP9’,          s:‘Starlight Protector’,  p:0.11},
+{r:‘consumer’,   w:‘MAC-10’,       s:‘Ensnared’,             p:0.09},
+{r:‘consumer’,   w:‘P250’,         s:‘Visions’,              p:0.08},
+{r:‘industrial’, w:‘Nova’,         s:‘Sobek’,                p:0.24},
+{r:‘industrial’, w:‘Tec-9’,        s:‘Decimator’,            p:0.32},
+{r:‘milspec’,    w:‘FAMAS’,        s:‘Meltdown’,             p:0.75},
+{r:‘milspec’,    w:‘Galil’,        s:‘Chromatic Aberration’, p:1.00},
+{r:‘milspec’,    w:‘MP5-SD’,       s:‘Necro Jr.’,            p:0.55},
+{r:‘restricted’, w:‘Glock-18’,     s:‘Umbral Rabbit’,        p:3.80},
+{r:‘restricted’, w:‘SSG 08’,       s:‘Fever Dream’,          p:5.20},
+{r:‘classified’, w:‘MP7’,          s:‘Abyssal Apparition’,   p:15.0},
+{r:‘classified’, w:‘AK-47’,        s:‘Phantom Disruptor’,    p:25.0},
+{r:‘covert’,     w:‘USP-S’,        s:‘Ticket to Hell’,       p:68.0},
+{r:‘covert’,     w:‘AWP’,          s:‘Fade’,                 p:90.0},
+{r:‘contraband’, w:‘★ Bayonet’,    s:‘Lore’,                 p:500},
+]},
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let G = {bal:100, cases:{}, keys:0, inv:[]};
+
+function load() { try { const s=localStorage.getItem(‘cs2g2’); if(s) G=JSON.parse(s); } catch(e){} }
+function save() { try { localStorage.setItem(‘cs2g2’, JSON.stringify(G)); } catch(e){} }
+function fmt(n) { return ‘$’+Number(n).toFixed(2); }
+
+function toast(msg, d=2200) {
+const el=document.getElementById(‘toast’);
+el.textContent=msg; el.classList.add(‘show’);
+setTimeout(()=>el.classList.remove(‘show’),d);
+}
+
+function bals() {
+const v=G.bal.toFixed(2);
+[‘bal1’,‘bal2’,‘bal3’].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=v; });
+}
+
+// ─── WEIGHTED RANDOM ─────────────────────────────────────────────────────────
+const RW = {consumer:25,industrial:20,milspec:15.98,restricted:3.2,classified:0.64,covert:0.12,contraband:0.06};
+function pick(skins) {
+const ws=skins.map(s=>RW[s.r]||1), tot=ws.reduce((a,b)=>a+b,0);
+let r=Math.random()*tot;
+for(let i=0;i<skins.length;i++){r-=ws[i];if(r<=0)return skins[i];}
+return skins[skins.length-1];
+}
+function pickWear(r) {
+const w=[‘covert’,‘contraband’].includes(r)?[20,30,30,12,8]:[8,20,35,22,15];
+const t=w.reduce((a,b)=>a+b,0); let rv=Math.random()*t;
+for(let i=0;i<WEAR.length;i++){rv-=w[i];if(rv<=0)return WEAR[i];}
+return WEAR[2];
+}
+
+// ─── RENDER STORE ─────────────────────────────────────────────────────────────
+function renderStore() {
+const grid=document.getElementById(‘store-grid’);
+grid.innerHTML=’’;
+CASES.forEach(c=>{
+const owned=G.cases[c.id]||0;
+const div=document.createElement(‘div’);
+div.className=‘store-card’;
+div.innerHTML=` <div class="card-art" style="background:linear-gradient(155deg,${c.color}20,${c.color}06)"> <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 60%,${c.color}28,transparent 70%)"></div> ${caseSVG(c,70)} </div> <div class="card-info"> <div class="card-name">${c.name}</div> <div class="card-sub">${c.desc}${owned?` · <span style="color:var(--gold)">×${owned}</span>`:''}</div> <div class="card-price-row"> <div class="card-price">${fmt(c.price)}</div> <button class="buy-btn" onclick="event.stopPropagation();buy('case','${c.id}')">BUY</button> </div> </div>`;
+grid.appendChild(div);
+});
+document.getElementById(‘s-cases’).textContent=Object.values(G.cases).reduce((a,b)=>a+b,0);
+document.getElementById(‘s-keys’).textContent=G.keys;
+document.getElementById(‘s-skins’).textContent=G.inv.length;
+}
+
+// ─── RENDER CASES LIST ────────────────────────────────────────────────────────
+function renderCases() {
+const wrap=document.getElementById(‘cases-list’);
+wrap.innerHTML=’’;
+const total=Object.values(G.cases).reduce((a,b)=>a+b,0);
+if(!total){
+wrap.innerHTML=`<div class="empty"><div class="ico">📦</div><p>No cases yet.<br>Visit the Store!</p></div>`;
+return;
+}
+const order=[‘consumer’,‘industrial’,‘milspec’,‘restricted’,‘classified’,‘covert’,‘contraband’];
+CASES.forEach(c=>{
+const cnt=G.cases[c.id]||0; if(!cnt)return;
+const dots=order.filter(r=>c.skins.some(x=>x.r===r)).map(r=>`<div class="rarity-seg" style="background:${RARITY[r].color}"></div>`).join(’’);
+const div=document.createElement(‘div’);
+div.innerHTML=`<div class="case-row" onclick="openUI('${c.id}')"> <div class="case-icon">${caseSVG(c,46)}</div> <div class="case-info"><div class="case-name">${c.name}</div><div class="case-count">Qty: ${cnt} · Needs key 🗝️</div></div> <span style="color:var(--text2);font-size:20px">›</span> </div> <div class="rarity-bar-row">${dots}</div> <div class="open-btn-row"> ${G.keys>0 ?`<button class="open-btn" onclick="openUI('${c.id}')">🗝️ OPEN CASE</button>`:`<div class="need-key-badge">🗝️ Need a key</div><button class="open-btn" disabled>OPEN</button>`} </div>`;
+wrap.appendChild(div);
+});
+}
+
+// ─── RENDER INVENTORY ─────────────────────────────────────────────────────────
+function renderInv() {
+const grid=document.getElementById(‘inv-grid’);
+const filters=document.getElementById(‘inv-filters’);
+document.getElementById(‘inv-count’).textContent=G.inv.length;
+document.getElementById(‘inv-total’).textContent=fmt(G.inv.reduce((a,b)=>a+b.val,0));
+document.getElementById(‘inv-best’).textContent=fmt(G.inv.length?Math.max(…G.inv.map(x=>x.val)):0);
+
+const active=filters.querySelector(’.fchip.active’)?.dataset.r||‘all’;
+filters.innerHTML=’’;
+[‘all’,…[…new Set(G.inv.map(x=>x.rarity))]].forEach(r=>{
+const ch=document.createElement(‘button’);
+ch.className=‘fchip’+(r===active?’ active’:’’);
+ch.dataset.r=r; ch.textContent=r===‘all’?‘All’:RARITY[r]?.label||r;
+if(r!==‘all’) ch.style.color=RARITY[r]?.color;
+ch.onclick=()=>{filters.querySelectorAll(’.fchip’).forEach(x=>x.classList.remove(‘active’));ch.classList.add(‘active’);renderInv();};
+filters.appendChild(ch);
+});
+
+if(!G.inv.length){
+grid.innerHTML=`<div class="empty" style="grid-column:span 2"><div class="ico">🎮</div><p>Inventory empty.<br>Open some cases!</p></div>`;
+return;
+}
+const list=active===‘all’?G.inv:G.inv.filter(x=>x.rarity===active);
+grid.innerHTML=’’;
+[…list].sort((a,b)=>b.val-a.val).forEach(item=>{
+const rc=RARITY[item.rarity];
+const div=document.createElement(‘div’);
+div.className=‘inv-item’;
+div.innerHTML=` <div class="inv-item-art ${rc.cls}"> <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,${rc.color}1e,transparent 70%)"></div> ${wsvg(item.weapon,rc.color)} <div class="inv-rarity-bar" style="background:${rc.color}"></div> </div> <div class="inv-item-info"> <div class="inv-item-weapon">${item.weapon}</div> <div class="inv-item-skin">${item.skin} · ${item.wear}</div> <div class="inv-item-val">${fmt(item.val)}</div> </div> <button class="sell-tag" onclick="event.stopPropagation();openSell('${item.id}')">SELL</button>`;
+div.onclick=()=>openSell(item.id);
+grid.appendChild(div);
+});
+}
+
+// ─── BUY ─────────────────────────────────────────────────────────────────────
+function buy(type, arg) {
+ac();
+if(type===‘key’){
+const cost=Number(arg)*2.5;
+if(G.bal<cost){toast(‘❌ Not enough balance!’);return;}
+G.bal-=cost; G.keys+=Number(arg);
+playBuy(); toast(`✅ Bought ${arg} key${arg>1?'s':''}!`);
+} else {
+const c=CASES.find(x=>x.id===arg);
+if(!c||G.bal<c.price){toast(‘❌ Not enough balance!’);return;}
+G.bal-=c.price; G.cases[arg]=(G.cases[arg]||0)+1;
+playBuy(); toast(`✅ Bought ${c.name}!`);
+}
+save(); bals(); renderStore(); renderCases();
+}
+
+// ─── OPENING ──────────────────────────────────────────────────────────────────
+let CID=null, RESULT=null, spinning=false, tickTimer=null;
+
+function openUI(caseId) {
+if(spinning)return;
+ac();
+const cd=CASES.find(c=>c.id===caseId);
+if(!cd)return;
+if(!G.keys){toast(‘🗝️ You need a key!’);return;}
+if(!(G.cases[caseId]||0)){toast(‘📦 Need this case!’);return;}
+CID=caseId;
+document.getElementById(‘spin-label’).textContent=‘OPENING’;
+document.getElementById(‘spin-title’).textContent=cd.name.toUpperCase();
+document.getElementById(‘open-modal’).classList.add(‘open’);
+document.getElementById(‘result’).classList.remove(‘show’);
+G.keys–; G.cases[caseId]–;
+if(G.cases[caseId]<=0) delete G.cases[caseId];
+setTimeout(()=>doSpin(cd),180);
+}
+
+function buildTrack(cd, win, ww) {
+const track=document.getElementById(‘spin-track’);
+track.innerHTML=’’; track.style.transition=‘none’; track.style.transform=‘translateX(0)’;
+const WIN=50;
+for(let i=0;i<60;i++){
+const skin=i===WIN?{…win,_w:ww}:{…pick(cd.skins),_w:pickWear(’’)};
+if(i!==WIN) skin._w=pickWear(skin.r);
+const rc=RARITY[skin.r];
+const el=document.createElement(‘div’);
+el.className=`spin-item ${rc.cls}`;
+el.style.borderColor=i===WIN?rc.color:‘transparent’;
+el.innerHTML=` <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,${rc.color}1a,transparent 70%)"></div> ${wsvg(skin.w,rc.color)} <div class="spin-item-name">${skin.w}<br><span style="font-weight:400;opacity:.55">${skin.s}</span></div> <div class="spin-item-wear">${skin._w.abbr}</div> <div class="spin-rbar" style="background:${rc.color}"></div>`;
+track.appendChild(el);
+}
+return WIN;
+}
+
+function doSpin(cd) {
+spinning=true;
+const win=pick(cd.skins), ww=pickWear(win.r);
+buildTrack(cd,win,ww);
+// padding-left on track already centers item 0. To center item 50, scroll left by 50 * ITEM_W exactly.
+const ITEM_W=168;
+const tx=-(50*ITEM_W);
+const track=document.getElementById(‘spin-track’);
+
+// Dynamic ticking - recursive setTimeout so interval truly changes over time
+clearTimeout(tickTimer);
+const SPIN_MS=7000;
+const start=Date.now();
+let lastTick=0;
+function scheduleTick() {
+const p=Math.min((Date.now()-start)/SPIN_MS,1);
+// Eased interval: fast at start, very slow near end
+const interval = p<0.5 ? 60 : p<0.7 ? 80 : p<0.82 ? 130 : p<0.9 ? 220 : p<0.95 ? 380 : 600;
+tickTimer=setTimeout(()=>{
+if(!spinning)return;
+const now=Date.now();
+if(now-lastTick>=interval-10){ // debounce
+playTick(p>0.85);
+lastTick=now;
+}
+if(p<0.98) scheduleTick();
+}, interval);
+}
+scheduleTick();
+
+requestAnimationFrame(()=>requestAnimationFrame(()=>{
+track.style.transition=‘transform 7s cubic-bezier(0.04,0.9,0.14,1.0)’;
+track.style.transform=`translateX(${tx}px)`;
+}));
+
+const val=+(win.p * ww.m * (0.85+Math.random()*.3)).toFixed(2);
+RESULT={id:Date.now().toString(),caseId:cd.id,weapon:win.w,skin:win.s,rarity:win.r,wear:ww.label,val};
+setTimeout(()=>{clearTimeout(tickTimer);showResult(RESULT);},7400);
+}
+
+function showResult(item) {
+spinning=false;
+const rc=RARITY[item.rarity];
+document.getElementById(‘result’).style.setProperty(’–rc’,rc.color);
+document.getElementById(‘r-rarity’).textContent=rc.label.toUpperCase();
+document.getElementById(‘r-rarity’).style.color=rc.color;
+const bar=document.getElementById(‘r-bar’);
+bar.style.background=rc.color; bar.style.boxShadow=`0 0 14px ${rc.color}`;
+const art=document.getElementById(‘r-art’);
+art.className=`res-art ${rc.cls}`;
+art.innerHTML=`<div style="position:absolute;inset:0;border-radius:14px;background:radial-gradient(circle,${rc.color}28,transparent 70%)"></div>${wsvg(item.weapon,rc.color)}`;
+art.style.filter=`drop-shadow(0 0 20px ${rc.color}66)`;
+document.getElementById(‘r-name’).textContent=item.weapon;
+document.getElementById(‘r-skin’).textContent=item.skin;
+document.getElementById(‘r-wear’).textContent=item.wear;
+document.getElementById(‘r-val’).textContent=fmt(item.val);
+document.getElementById(‘result’).classList.add(‘show’);
+playReveal(item.rarity);
+}
+
+function keepItem() {
+if(!RESULT)return;
+G.inv.push(RESULT); save();
+closeModal(); renderInv(); renderStore();
+toast(‘✅ Added to inventory!’); RESULT=null;
+}
+function sellItem() {
+if(!RESULT)return;
+G.bal+=RESULT.val; save(); bals();
+closeModal(); renderStore(); playSell();
+toast(`💰 Sold for ${fmt(RESULT.val)}!`); RESULT=null;
+}
+function openAgain() {
+if(!RESULT)return;
+G.inv.push(RESULT); save(); renderInv(); renderStore();
+RESULT=null;
+document.getElementById(‘result’).classList.remove(‘show’);
+const cd=CASES.find(c=>c.id===CID);
+if(!G.keys){closeModal();toast(‘🗝️ Out of keys!’);return;}
+if(!(G.cases[CID]||0)){closeModal();toast(‘📦 Out of cases!’);return;}
+G.keys–; G.cases[CID]–;
+if(G.cases[CID]<=0) delete G.cases[CID];
+save(); setTimeout(()=>doSpin(cd),400);
+}
+function closeModal() {
+clearTimeout(tickTimer); spinning=false;
+document.getElementById(‘open-modal’).classList.remove(‘open’);
+document.getElementById(‘result’).classList.remove(‘show’);
+renderCases(); renderStore();
+}
+
+// ─── SELL SHEET ───────────────────────────────────────────────────────────────
+let SID=null;
+function openSell(id) {
+const item=G.inv.find(x=>x.id===id); if(!item)return;
+SID=id;
+const rc=RARITY[item.rarity];
+document.getElementById(‘sm-weapon’).textContent=item.weapon;
+document.getElementById(‘sm-skin’).textContent=`${item.skin} (${item.wear})`;
+const art=document.getElementById(‘sm-art’);
+art.className=`sell-art ${rc.cls}`;
+art.innerHTML=wsvg(item.weapon,rc.color);
+document.getElementById(‘sm-price’).textContent=fmt(item.val);
+document.getElementById(‘sell-modal’).classList.add(‘open’);
+}
+function closeSell() { document.getElementById(‘sell-modal’).classList.remove(‘open’); SID=null; }
+function doSell() {
+const item=G.inv.find(x=>x.id===SID); if(!item)return;
+G.bal+=item.val; G.inv=G.inv.filter(x=>x.id!==SID);
+save(); bals(); closeSell(); renderInv(); renderStore(); playSell();
+toast(`💰 Sold for ${fmt(item.val)}!`);
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function tab(id, btn) {
+document.querySelectorAll(’.screen’).forEach(s=>s.classList.remove(‘active’));
+document.getElementById(id).classList.add(‘active’);
+document.querySelectorAll(’.nav-btn’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+if(id===‘inventory’) renderInv();
+if(id===‘cases’) renderCases();
+if(id===‘store’) renderStore();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+load(); bals(); renderStore();
+document.getElementById(‘sell-modal’).addEventListener(‘click’,e=>{if(e.target===document.getElementById(‘sell-modal’))closeSell();});
+document.addEventListener(‘touchmove’,e=>{if(document.getElementById(‘open-modal’).classList.contains(‘open’))e.preventDefault();},{passive:false});
+</script>
+
+</body>
+</html>
